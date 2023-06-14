@@ -51,14 +51,17 @@ class CustomCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 13),
                       ),
                     if(Cubit.chatModel!.data![index].latestMessage!.text != null)
-                    Text(
-                      '${Cubit.chatModel!.data![index].latestMessage!.text}',
-                      style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 13),
+                    Expanded(
+                      child: Text(
+                        '${Cubit.chatModel!.data![index].latestMessage!.text}',
+                        style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 13),
+                        maxLines: 1,
+                      ),
                     )
                   ],
                 ),
                 trailing: Text('${Cubit.chatModel!.data![index].latestMessage!.time!}',
-                style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 13,color: Colors.white),) ,
+                style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 13,color: Colors.grey),) ,
               ),
               if(Cubit.chatModel!.data![index].to!.id !=  Cubit.chatModel!.loginId)
                 ListTile(

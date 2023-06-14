@@ -17,6 +17,7 @@ void navigateTo(context, widget) => Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => widget),
     );
+
 PreferredSizeWidget defaultAppBar({
   required String text,
   required Function() func1,
@@ -31,7 +32,6 @@ PreferredSizeWidget defaultAppBar({
         text,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
-
         ),
       ),
       actions: [
@@ -42,23 +42,19 @@ PreferredSizeWidget defaultAppBar({
                 icon: Icon(
                   icon1,
                   size: 25.0,
-
                 )),
             IconButton(
                 onPressed: func2,
                 icon: Icon(
                   icon2,
                   size: 25.0,
-
                 )),
           ],
         ),
       ],
     );
+
 Widget myDivider() => Container(height: 0.5, color: Colors.grey[800]);
-
-
-
 
 Widget defaultButton(
         {required Color background,
@@ -127,7 +123,7 @@ Widget defaultTextField({
   required TextInputType type,
   TextEditingController? controller,
   String? Function(String?)? validate,
-   IconData? prefix,
+  IconData? prefix,
   double? width,
   double? height,
   InputBorder? border,
@@ -147,451 +143,520 @@ Widget defaultTextField({
         validator: validate,
         decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-            ),
+            hintStyle:
+                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             border: border,
             prefixIcon: Icon(prefix),
             suffixIcon: IconButton(onPressed: funcSuffix, icon: Icon(suffix))),
       ),
     );
 
-
 Widget myDividor1() => Container(
-  height: 1,
-  width: double.infinity,
-  color: Colors.grey[600],
-);
+      height: 1,
+      width: double.infinity,
+      color: Colors.grey[600],
+    );
+
 Widget myDividor2() => Container(
-  height: 1,
-  width: double.infinity,
-  color: Colors.grey[200],
-);
-Widget PostItem(PostModel model , context , index)=>SizedBox(
-  width: double.infinity,
-  child: Card(
-    clipBehavior: Clip.antiAliasWithSaveLayer,
-    elevation: 5.0,
-    margin: const EdgeInsets.symmetric(horizontal: 8),
-    child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start ,
-        children: [
-          Row(
-            children: [
-              InkWell(
-                onTap: (){
-                  TineLineCubit.get(context).goToProfilePerson(index);
-                },
-                child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius:25,
-                  backgroundImage: NetworkImage(model.postData[index].userDataPost.photo),
-                ),
-              ),
-              const SizedBox(width: 15,),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      height: 1,
+      width: double.infinity,
+      color: Colors.grey[200],
+    );
+
+Widget PostItem(PostModel model, context, index) => SafeArea(
+      child: Container(
+        color: Colors.white,
+        width: double.infinity,
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          elevation: 5.0,
+          // margin: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         TineLineCubit.get(context).goToProfilePerson(index);
                       },
-                      child: Row(
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: 25,
+                        backgroundImage: NetworkImage(
+                            model.postData[index].userDataPost.photo),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            model.postData[index].userDataPost.name,
-                            style:Theme.of(context).textTheme.bodyText1,
-
+                          InkWell(
+                            onTap: () {
+                              TineLineCubit.get(context)
+                                  .goToProfilePerson(index);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  model.postData[index].userDataPost.name,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 5,),
-
+                          Row(
+                            children: [
+                              Text(
+                                model.postData[index].dateOfPost,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                model.postData[index].job,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          model.postData[index].dateOfPost,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                        const SizedBox(width: 3,),
-                        Text(
-                          model.postData[index].job,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ],
+                    const SizedBox(
+                      width: 15,
                     ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          IconBroken.More_Square,
+                          size: 18,
+                        )),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: myDividor2(),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 10.0),
+                  child: Text(
+                    model.postData[index].textPost!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption!
+                        .copyWith(fontSize: 14),
+                  ),
+                ),
+                if (model.postData[index].image != null)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(top: 15.0),
+                    child: Container(
+                        height: 200.0,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                    model.postData[index].image!)))),
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (model.postData[index].image != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: myDividor2(),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      BlocConsumer<ChatCubit, ChatState>(
+                        listener: (context, state) {},
+                        builder: (context, state) {
+                          return defaultButtonWithIcon(
+                            icon: Icons.send,
+                            background: defaultColor,
+                            text: 'Send Message',
+                            function: () async {
+                              await ChatCubit.get(context).GetChatsFromPost(
+                                  idUser:
+                                      model.postData[index].userDataPost.id);
+
+                              navigateTo(context,
+                                  IndividualChatFromPost(index, model));
+                            },
+                            width: 120.0,
+                            radius: 30.0,
+                            height: 30.0,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+        ),
+      ),
+    );
+
+Widget ProfilePostWorkerItem(ProfileModel model, context, index) => SizedBox(
+      width: double.infinity,
+      child: Card(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 5.0,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                onTap: () {
+                  // navigateTo(context, ProSendUser());
+                },
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage:
+                          NetworkImage(model.data.posts![index].user!.photo!),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                model.data.posts![index].user!.name!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                model.data.posts![index].date!,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                model.data.posts![index].job!,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          IconBroken.More_Square,
+                          size: 18,
+                        )),
                   ],
                 ),
               ),
-              const SizedBox(width: 15,),
-              IconButton(onPressed: (){}, icon: const Icon(IconBroken.More_Square,size: 18,)),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: myDividor1(),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 8.0),
+                child: Text(
+                  model.data.posts![index].description!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption!
+                      .copyWith(fontSize: 14),
+                ),
+              ),
 
+              const SizedBox(
+                height: 10,
+              ),
+              // if(model.data!.posts![index].image != null)
+              //   Padding(
+              //     padding: const EdgeInsetsDirectional.only(top: 15.0),
+              //     child: Container(
+              //         height: 200.0,
+              //         width: double.infinity,
+              //         decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(4),
+              //             image:  DecorationImage(
+              //                 fit: BoxFit.cover,
+              //                 image: NetworkImage(model.data!.posts![index].image!) ))
+              //     ),
+              //   ),
+              // if(model.data!.posts![index].image != null)
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              //   child: myDividor2(),
+              // ),
+              const SizedBox(
+                height: 10,
+              )
             ],
           ),
-          const SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child:  myDividor2()  ,
-          ),
-          const SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start:10.0),
-            child: Text(
-                model.postData[index].textPost!,
-              style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
-            ),
-          ),
+        ),
+      ),
+    );
 
-          if(model.postData[index].image != null)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(top: 15.0),
-              child: Container(
-                  height: 200.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      image:  DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(model.postData[index].image!) ))
-              ),
-            ),
-          const SizedBox(height: 10,),
-          if(model.postData[index].image != null)
-            Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: myDividor2(),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-              BlocConsumer<ChatCubit , ChatState>(
-                listener:(context, state){
-
-                } ,
-                builder: (context, state){
-                  return defaultButtonWithIcon(
-                    icon: Icons.send,
-                    background: defaultColor,
-                    text: 'Send Message',
-                    function: ()async {
-                     await ChatCubit.get(context).GetChatsFromPost( idUser: model.postData[index].userDataPost.id);
-                      navigateTo(context, IndividualChatFromPost(index,model));
-                    },
-                    width: 120.0,
-                    radius: 30.0,
-                    height: 30.0,
-                  );
+Widget ProfilePostWorkerSendUserItem(WorkerSendUser model, context, index) =>
+    SizedBox(
+      width: double.infinity,
+      child: Card(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 5.0,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                onTap: () {
+                  // navigateTo(context, ProSendUser());
                 },
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage:
+                          NetworkImage(model.data!.posts![index].user!.photo!),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                model.data!.posts![index].user!.name!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                model.data!.posts![index].date!,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                model.data!.posts![index].time!,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.more_horiz,
+                          size: 18,
+                        )),
+                  ],
+                ),
               ),
-              ],
-            ),
-
-          ),
-
-        ],
-      ),
-    ),
-  ),
-);
-
-Widget ProfilePostWorkerItem(ProfileModel model , context , index)=>SizedBox(
-  width: double.infinity,
-  child: Card(
-    clipBehavior: Clip.antiAliasWithSaveLayer,
-    elevation: 5.0,
-    margin: const EdgeInsets.symmetric(horizontal: 8),
-    child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start ,
-        children: [
-          InkWell(
-            onTap: (){
-              // navigateTo(context, ProSendUser());
-            },
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius:25,
-                  backgroundImage: NetworkImage(model.data.posts![index].user!.photo!),
-                ),
-                const SizedBox(width: 15,),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            model.data.posts![index].user!.name!,
-                            style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 5,),
-
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            model.data.posts![index].date!,
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          const SizedBox(width: 3,),
-                          Text(
-                            model.data.posts![index].job!,
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 15,),
-                IconButton(onPressed: (){}, icon: const Icon(IconBroken.More_Square,size: 18,)),
-
-              ],
-            ),
-          ),
-          const SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: myDividor1(),
-          ),
-          const SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 8.0),
-            child: Text(
-                model.data.posts![index].description!,
-              style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
-            ),
-          ),
-
-          const SizedBox(height: 10,),
-          // if(model.data!.posts![index].image != null)
-          //   Padding(
-          //     padding: const EdgeInsetsDirectional.only(top: 15.0),
-          //     child: Container(
-          //         height: 200.0,
-          //         width: double.infinity,
-          //         decoration: BoxDecoration(
-          //             borderRadius: BorderRadius.circular(4),
-          //             image:  DecorationImage(
-          //                 fit: BoxFit.cover,
-          //                 image: NetworkImage(model.data!.posts![index].image!) ))
-          //     ),
-          //   ),
-          // if(model.data!.posts![index].image != null)
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          //   child: myDividor2(),
-          // ),
-          const SizedBox(height: 10,)
-        ],
-      ),
-    ),
-  ),
-);
-
-Widget ProfilePostWorkerSendUserItem(WorkerSendUser model , context , index)=>SizedBox(
-  width: double.infinity,
-  child: Card(
-    clipBehavior: Clip.antiAliasWithSaveLayer,
-    elevation: 5.0,
-    margin: const EdgeInsets.symmetric(horizontal: 8),
-    child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start ,
-        children: [
-          InkWell(
-            onTap: (){
-              // navigateTo(context, ProSendUser());
-            },
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius:25,
-                  backgroundImage: NetworkImage(model.data!.posts![index].user!.photo!),
-                ),
-                const SizedBox(width: 15,),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            model.data!.posts![index].user!.name!,
-                            style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 5,),
-
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            model.data!.posts![index].date!,
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          const SizedBox(width: 3,),
-                          Text(
-                            model.data!.posts![index].time!,
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 15,),
-                IconButton(onPressed: (){}, icon: const Icon(Icons.more_horiz,size: 18,)),
-
-              ],
-            ),
-          ),
-          const SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: myDividor1(),
-          ),
-          const SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 8.0),
-            child: Text(
-              model.data!.posts![index].description!,
-            ),
-          ),
-
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-          //   child: Container(
-          //     width: double.infinity,
-          //     child: Wrap(
-          //       children: [
-          //         Padding(
-          //           padding: EdgeInsetsDirectional.only(end:5.0),
-          //           child: MaterialButton(
-          //             height: 25.0,
-          //             minWidth: 1,
-          //             onPressed: (){},
-          //             padding: EdgeInsets.zero,
-          //             child: Text(
-          //               '#Software',
-          //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
-          //             ),
-          //           ),
-          //         ),
-          //         Padding(
-          //           padding: EdgeInsetsDirectional.only(end:5.0),
-          //           child: MaterialButton(
-          //             height: 25.0,
-          //             minWidth: 1,
-          //             onPressed: (){},
-          //             padding: EdgeInsets.zero,
-          //             child: Text(
-          //               '#Software',
-          //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
-          //             ),
-          //           ),
-          //         ),
-          //         Padding(
-          //           padding: EdgeInsetsDirectional.only(end:5.0),
-          //           child: MaterialButton(
-          //             height: 25.0,
-          //             minWidth: 1,
-          //             onPressed: (){},
-          //             padding: EdgeInsets.zero,
-          //             child: Text(
-          //               '#Software',
-          //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
-          //             ),
-          //           ),
-          //         ),
-          //         Padding(
-          //           padding: EdgeInsetsDirectional.only(end:5.0),
-          //           child: MaterialButton(
-          //             height: 25.0,
-          //             minWidth: 1,
-          //             onPressed: (){},
-          //             padding: EdgeInsets.zero,
-          //             child: Text(
-          //               '#Software',
-          //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
-          //             ),
-          //           ),
-          //         ),
-          //         Padding(
-          //           padding: EdgeInsetsDirectional.only(end:5.0),
-          //           child: MaterialButton(
-          //             height: 25.0,
-          //             minWidth: 1,
-          //             onPressed: (){},
-          //             padding: EdgeInsets.zero,
-          //             child: Text(
-          //               '#Software',
-          //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          const SizedBox(height: 10,),
-          if(model.data!.posts![index].image != null)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(top: 15.0),
-              child: Container(
-                  height: 200.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      image:  DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(model.data!.posts![index].image!) ))
+              const SizedBox(
+                height: 10,
               ),
-            ),
-          if(model.data!.posts![index].image != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: myDividor2(),
-            ),
-          const SizedBox(height: 10,)
-        ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: myDividor1(),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 8.0),
+                child: Text(
+                  model.data!.posts![index].description!,
+                ),
+              ),
+
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: Container(
+              //     width: double.infinity,
+              //     child: Wrap(
+              //       children: [
+              //         Padding(
+              //           padding: EdgeInsetsDirectional.only(end:5.0),
+              //           child: MaterialButton(
+              //             height: 25.0,
+              //             minWidth: 1,
+              //             onPressed: (){},
+              //             padding: EdgeInsets.zero,
+              //             child: Text(
+              //               '#Software',
+              //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
+              //             ),
+              //           ),
+              //         ),
+              //         Padding(
+              //           padding: EdgeInsetsDirectional.only(end:5.0),
+              //           child: MaterialButton(
+              //             height: 25.0,
+              //             minWidth: 1,
+              //             onPressed: (){},
+              //             padding: EdgeInsets.zero,
+              //             child: Text(
+              //               '#Software',
+              //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
+              //             ),
+              //           ),
+              //         ),
+              //         Padding(
+              //           padding: EdgeInsetsDirectional.only(end:5.0),
+              //           child: MaterialButton(
+              //             height: 25.0,
+              //             minWidth: 1,
+              //             onPressed: (){},
+              //             padding: EdgeInsets.zero,
+              //             child: Text(
+              //               '#Software',
+              //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
+              //             ),
+              //           ),
+              //         ),
+              //         Padding(
+              //           padding: EdgeInsetsDirectional.only(end:5.0),
+              //           child: MaterialButton(
+              //             height: 25.0,
+              //             minWidth: 1,
+              //             onPressed: (){},
+              //             padding: EdgeInsets.zero,
+              //             child: Text(
+              //               '#Software',
+              //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
+              //             ),
+              //           ),
+              //         ),
+              //         Padding(
+              //           padding: EdgeInsetsDirectional.only(end:5.0),
+              //           child: MaterialButton(
+              //             height: 25.0,
+              //             minWidth: 1,
+              //             onPressed: (){},
+              //             padding: EdgeInsets.zero,
+              //             child: Text(
+              //               '#Software',
+              //               style: Theme.of(context).textTheme.caption!.copyWith(color: defaultColor),
+              //             ),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              const SizedBox(
+                height: 10,
+              ),
+              if (model.data!.posts![index].image != null)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 15.0),
+                  child: Container(
+                      height: 200.0,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                  model.data!.posts![index].image!)))),
+                ),
+              if (model.data!.posts![index].image != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: myDividor2(),
+                ),
+              const SizedBox(
+                height: 10,
+              )
+            ],
+          ),
+        ),
       ),
-    ),
-  ),
-);
-
-
+    );
 
 /*Component manar*/
 
-Widget MenuPage({ required Color color, required IconData icon ,required text, required fun , context}) =>
+Widget MenuPage(
+        {required Color color,
+        required IconData icon,
+        required text,
+        required fun,
+        context}) =>
     Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
           leading: CircleAvatar(
-              backgroundColor: color,
-              child: Icon(icon,
-              color:Colors.white),
-              ),
+            backgroundColor: color,
+            child: Icon(icon, color: Colors.white),
+          ),
           title: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               text,
-              style: Theme.of(context).textTheme.bodyText1!.copyWith( fontSize: 16),
+              style:
+                  Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 16),
               textScaleFactor: 1.5,
             ),
           ),
@@ -599,12 +664,10 @@ Widget MenuPage({ required Color color, required IconData icon ,required text, r
             icon: Icons.arrow_forward_ios_outlined,
             function: fun,
             size: 20,
-
           ),
           selected: true,
-          onTap:fun),
+          onTap: fun),
     );
-
 
 Widget AppBarIcons(
         {required IconData icon,
@@ -664,8 +727,6 @@ class TextFeild_ extends StatelessWidget {
   }
 }
 
-
-
 Widget ColumnList() => Container(
       height: 120,
       padding: const EdgeInsets.all(0),
@@ -707,8 +768,6 @@ Widget ColumnList() => Container(
       ]),
     );
 
-
-
 /*ahmed */
 
 enum UserTypes { Worker, Custmer }
@@ -747,52 +806,49 @@ Widget default_Button({
       ),
     );
 
-Widget default_tTextFormField(
-    {required TextEditingController? controller,
-      TextInputType? type,
-      bool isPassword =false ,
-      required String? labelText,
-      required IconData? prefix,
-      IconData? suffix,
-      double radius = 50.0,
-      double height = 50.0,
-      // required var validate,
-      //required FormFieldValidator? validate,
-      required FormFieldValidator<String>? validate,
-      VoidCallback? suffixPressed,
-      VoidCallback? onTap,
-      bool isClickable = true,
-      ValueChanged<String>? onFieldSubmitted,
-      required TextInputType keyboardType,
-      bool? obscureText,
-    }) => TextFormField(
-  controller: controller,
-  keyboardType: type,
-  obscureText: isPassword,
-  decoration: InputDecoration(
-    // hintText: 'Email Adress',
-    prefixIcon: Icon(prefix),
-    labelText: labelText,
-    border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(radius)
-        )
-    ),
-    suffixIcon: IconButton(onPressed: suffixPressed, icon: Icon(suffix)),
-  ),
-  onFieldSubmitted: onFieldSubmitted,
-  validator: validate,
-  onTap: onTap,
-  enabled: isClickable,
-);
+Widget default_tTextFormField({
+  required TextEditingController? controller,
+  TextInputType? type,
+  bool isPassword = false,
+  required String? labelText,
+  required IconData? prefix,
+  IconData? suffix,
+  double radius = 50.0,
+  double height = 50.0,
+  // required var validate,
+  //required FormFieldValidator? validate,
+  required FormFieldValidator<String>? validate,
+  VoidCallback? suffixPressed,
+  VoidCallback? onTap,
+  bool isClickable = true,
+  ValueChanged<String>? onFieldSubmitted,
+  required TextInputType keyboardType,
+  bool? obscureText,
+}) =>
+    TextFormField(
+      controller: controller,
+      keyboardType: type,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        // hintText: 'Email Adress',
+        prefixIcon: Icon(prefix),
+        labelText: labelText,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(radius))),
+        suffixIcon: IconButton(onPressed: suffixPressed, icon: Icon(suffix)),
+      ),
+      onFieldSubmitted: onFieldSubmitted,
+      validator: validate,
+      onTap: onTap,
+      enabled: isClickable,
+    );
 
 Widget socialButtonCircle(color, icon, {iconColor, Function? onTap}) {
   return InkWell(
-    onTap: () {
-
-    },
+    onTap: () {},
     child: Container(
         padding: const EdgeInsets.all(20.0),
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: color,
         ),
@@ -824,28 +880,24 @@ Widget default_RadioButton({
         dense: true,
         contentPadding: const EdgeInsets.all(0.0),
         shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
         onChanged: function(),
       ),
     );
 
 void navigateAndFinish(
-    context,
-    widget,
-    ) =>
+  context,
+  widget,
+) =>
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => widget,
       ),
-          (route) {
+      (route) {
         return false;
       },
     );
-
-
-
-
 
 Widget deffaultTextButton({
   required VoidCallback? onPressed,
@@ -875,7 +927,9 @@ void showToast({
         backgroundColor: choseToasteColor(state),
         textColor: Colors.white,
         fontSize: 16.0);
+
 enum ToastState { SUCCESS, ERORR, WORNING }
+
 Color choseToasteColor(ToastState state) {
   Color color;
   switch (state) {
@@ -892,12 +946,10 @@ Color choseToasteColor(ToastState state) {
   return color;
 }
 
-Widget EditProfile({ required text, required fun}) =>
-    Padding(
+Widget EditProfile({required text, required fun}) => Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
-        onTap:fun,
-
+        onTap: fun,
         title: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -915,51 +967,35 @@ Widget EditProfile({ required text, required fun}) =>
       ),
     );
 
-Widget EditButton({required  String text, required void Function() fun,
-})=> Padding(
-  padding: const EdgeInsets.all(8.0),
-  child:   InkWell(
-    onTap:fun ,
-    child:   Container(
-
-
-
-      padding: const EdgeInsets.all(12.0),
-
-      child: Row(children: [
-
-        TextButton(onPressed: null, child: Text(text
-
-          ,style: const TextStyle(color: Colors.black,fontSize: 24,
-
-
-
-
-
-          ),),),
-
-        const Spacer(),
-
-        const Icon(Icons.arrow_forward_ios_outlined)
-
-      ],),
-
-
-
-    ),
-  ),
-);
-
-
-
-
-
-
-
-
-
-
-
+Widget EditButton({
+  required String text,
+  required void Function() fun,
+}) =>
+    Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: fun,
+        child: Container(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: null,
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              const Icon(Icons.arrow_forward_ios_outlined)
+            ],
+          ),
+        ),
+      ),
+    );
 
 // Widget defaultButton({
 //   double width = double.infinity,

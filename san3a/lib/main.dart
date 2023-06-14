@@ -15,6 +15,9 @@ import 'package:san3a/shared/network/local/cache_helper.dart';
 import 'package:san3a/shared/network/remote/dio_helper.dart';
 import 'package:san3a/shared/styles/themes.dart';
 
+import 'modules/Splash_Screen/splash_screen.dart';
+//brakat
+//Welcome to git hub
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -37,7 +40,7 @@ Future<void> main() async {
     widget = San3aLayout();
   }
   // camera =await availableCameras();
-  runApp(MyApp(isDark, isOpen, widget));
+  runApp(MyApp(isDark, isOpen, splash_screen()));
 }
 
 class MyApp extends StatelessWidget {
