@@ -9,5 +9,4 @@ class Assets {
   static const String imagesGoogle = 'assets/images/google.png';
   static const String imagesImg = 'assets/images/img.png';
   static const String imagesImg5 = 'assets/images/img_5.png';
-
 }

@@ -1,358 +1,389 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:san3a/modules/Login_Screen/Cubit/cubit.dart';
-import 'package:san3a/modules/Login_Screen/Cubit/states.dart';
+import 'package:san3a/modules/add_post_screen/add_post_screen.dart';
+import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
+import 'package:san3a/modules/chat_screen/individual_chat_screen/individual_chat_from_post.dart';
+import 'package:san3a/modules/pro_woker/profile_cubit/profile_worker_cubit.dart';
+import 'package:san3a/modules/pro_woker/profile_cubit/profile_worker_states.dart';
+import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_cubit.dart';
 import 'package:san3a/shared/component/component.dart';
+import 'package:san3a/shared/component/constant.dart';
 import 'package:san3a/shared/styles/colors.dart';
+import 'package:san3a/shared/styles/icon_broken.dart';
 
-class ProSendWorker extends StatelessWidget {
-  const ProSendWorker({Key? key}) : super(key: key);
+class ProWorker extends StatelessWidget {
+  const ProWorker( {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginCubit , AppLoginStates>(
-      listener:(context , state){
+    return BlocProvider(
+      create: (BuildContext context) =>ProfileWorkerCubit()..GetProfilePostsWorker(),
+      child: BlocConsumer<ProfileWorkerCubit , ProfileWorkerState>(
+        listener:(context , state){
 
-      } ,
-      builder: (context , state){
-        return Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Container(
-                  height: 120.0,
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                       CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage: NetworkImage(
-                            '${LoginCubit.get(context).loginModel!.data!.photo}',
-                      ),),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                             Text(
-                              '${LoginCubit.get(context).loginModel!.data!.name}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            defaultButton(
-                              text: 'Send Message',
-                              function: () {},
-                              background: defaultColor,
-                              width: 160.0,
-                              radius: 30.0,
-                              height: 30.0,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Column(
+        } ,
+        builder: (context , state){
+          var Cubit= ProfileWorkerCubit.get(context);
+          return Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              leading: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                icon:Icon(Icons.arrow_back,),),
+              title: Text('Profile',
+                  style:Theme.of(context).textTheme.bodyText1),
+              centerTitle: true,
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () { navigateTo(context, AddScreen()); },
+              child: Icon(IconBroken.Edit),
+            ),
+            body: ConditionalBuilder(
+              condition: state is GetProfilePostWorkerSuccessState,
+              builder: (context)=>SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 170.0,
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 50.0,
+                                  backgroundImage: NetworkImage(
+                                      '${LoginCubit.get(context).loginModel!.data!.photo}'),
+                                ),
+                                const SizedBox(
+                                  height: 5.0,
+                                ),
+                                Text(
+                                    '${LoginCubit.get(context).loginModel!.data!.name}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 20.0, fontWeight: FontWeight.bold)
+                                ),
+                                const SizedBox(
+                                  height: 5.0,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.star,
+                                      color: Color(0xffe59819),
+                                    ),
+                                    Icon(
+                                      Icons.star,
+                                      color: Color(0xffe59819),
+                                    ),
+                                    Icon(
+                                      Icons.star,
+                                      color: Color(0xffe59819),
+                                    ),
+                                    Icon(
+                                      Icons.star_border,
+                                      color: Color(0xffe59819),
+                                    ),
+                                    Icon(
+                                      Icons.star_border,
+                                      color: Color(0xffe59819),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5.0,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: const [
-                                  Icon(
-                                    Icons.star,
-                                    color: Color(0xffe59819),
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: Color(0xffe59819),
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: Color(0xffe59819),
-                                  ),
-                                  Icon(
-                                    Icons.star_border,
-                                    color: Color(0xffe59819),
-                                  ),
-                                  Icon(
-                                    Icons.star_border,
-                                    color: Color(0xffe59819),
-                                  ),
-                                ],
+                              Expanded(
+                                flex: 2,
+                                child:  Text(
+                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elementum nulla, at ornare est',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 12.0),
+                                ),
                               ),
-                              const Text(
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elementum nulla, at ornare est',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 12.0),
-                              )
                             ],
                           ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: const [],
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                children:  [
+                                  Text('Details',
+                                      style:Theme.of(context).textTheme.bodyText1!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2.0,
+                                          fontSize: 18)),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15.0,
+                              ),
+                              if(Cubit.profile!.data!.userData!.role != 'customer')
+                                Row(
+                                  children: [
+                                    Row(
+                                      children:  [
+                                        Icon(Icons.work_history),
+                                        SizedBox(
+                                          width: 5.0,
+                                        ),
+                                        Text('Job',
+                                            style: Theme.of(context).textTheme.bodyText1!.copyWith( fontSize: 18)),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      width: 10.0,
+                                    ),
+                                    Row(
+                                      children:  [
+                                        Text('Mechanices',
+                                          style: Theme.of(context).textTheme.bodyText1,
+                                        )],
+                                    )
+                                  ],
+                                ),
+                              const SizedBox(
+                                height: 15.0,
+                              ),
+                              Row(
+                                children: [
+                                  Row(
+                                    children:  [
+                                      Icon(Icons.home),
+                                      SizedBox(
+                                        width: 5.0,
+                                      ),
+                                      Text('Lives in',
+                                          style: Theme.of(context).textTheme.bodyText1!.copyWith( fontSize: 18)),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Row(
+                                    children:  [
+                                      Text('AlHaram street',
+                                        style: Theme.of(context).textTheme.bodyText1,
+                                      )],
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15.0,
+                              ),
+                              if(Cubit.profile!.data!.userData!.role != 'customer')
+                                Row(
+                                  children: [
+                                    Row(
+                                      children:  [
+                                        Icon(Icons.date_range),
+                                        SizedBox(
+                                          width: 5.0,
+                                        ),
+                                        Text('Born',
+                                            style: Theme.of(context).textTheme.bodyText1!.copyWith( fontSize: 18)),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      width: 10.0,
+                                    ),
+                                    Row(
+                                      children:  [
+                                        Text('25-11-2022',
+                                          style: Theme.of(context).textTheme.bodyText1,
+                                        )],
+                                    )
+                                  ],
+                                ),
+                              if(Cubit.profile!.data!.userData!.role != 'customer')
+                                const SizedBox(
+                                  height: 15.0,
+                                ),
+                              Row(
+                                children: [
+                                  Row(
+                                    children:  [
+                                      Icon(Icons.add_location_alt_sharp),
+                                      SizedBox(
+                                        width: 5.0,
+                                      ),
+                                      Text('From',
+                                          style:Theme.of(context).textTheme.bodyText1!.copyWith( fontSize: 18)),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Row(
+                                    children:  [
+                                      Text('Giza',
+                                          style: Theme.of(context).textTheme.bodyText1),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15.0,
+                              ),
+                            ],
+                          ),
+
+
+                        ],
+                      ),
+                    ),
+                    ListView.separated(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context,index)=>InkWell(
+                          onTap: (){
+                            navigateTo(context, ProfilePostWorkerItem(Cubit.profile!,context , index));
+                          },
+                          child: Card(
+                            elevation: 10.0,
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.transparent,
+                                              radius:25,
+                                              backgroundImage: NetworkImage(
+                                                  TineLineCubit.get(context).getPost!.postData[index].userDataPost.photo),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(TineLineCubit.get(context).getPost!.postData[index].userDataPost.name),
+                                                Text(TineLineCubit.get(context).getPost!.postData[index].dateOfPost),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    Container(
+                                      alignment: Alignment.topRight,
+                                      child:  PopupMenuButton<String>(
+                                        itemBuilder: (BuildContext context) {
+                                          return [
+                                            PopupMenuItem<String>(
+                                              value: 'Saved',
+                                              child: Text('Saved'),
+                                            ),
+                                            PopupMenuItem<String>(
+                                              value: 'Report',
+                                              child: Text('Report'),
+                                            ),
+                                          ];
+                                        },
+                                        onSelected: (String value) {
+                                          switch (value) {
+                                            case 'Saved':
+                                            // Handle save action
+                                              print('Saved action');
+                                              break;
+                                            case 'Report':
+                                            // Handle report action
+                                              print('Report action');
+                                              break;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:3.0,
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10.0),
+                                      alignment: Alignment.bottomLeft,
+                                      child: Text(TineLineCubit.get(context).getPost!.postData[index].textPost!,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    TineLineCubit.get(context).getPost!.postData[index].image == null? SizedBox() : SizedBox(
+                                      child: Image(
+                                        image: NetworkImage(TineLineCubit.get(context).getPost!.postData[index].image!),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Divider(),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      defaultButtonWithIcon(
+                                        icon: Icons.send,
+                                        background: defaultColor,
+                                        text: 'Message',
+                                        function: () async {
+                                          await ChatCubit.get(context).GetChatsFromPost(
+                                              idUser: TineLineCubit.get(context).getPost!.postData[index].userDataPost.id);
+                                          navigateTo(context, IndividualChatFromPost(index, TineLineCubit.get(context).getPost!));
+                                        },
+                                        width: 120.0,
+                                        radius: 30.0,
+                                        height: 30.0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
-                    )
+                        separatorBuilder: (context,index)=>const SizedBox(height: 10,),
+                        itemCount: Cubit.profile!.data!.posts!.length),
                   ],
                 ),
-
-                const SizedBox(
-                  height: 20.0,
-                ),
-
-
-                Column(
-                  children: [
-                    Row(
-                      children: const [
-                        Text('Details',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                                letterSpacing: 2.0,
-                                fontSize: 18)),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    Row(
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.work_history),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text('Job',
-                                style: TextStyle(color: textColor, fontSize: 18)),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Row(
-                          children: const [
-                            Text('Mechanices',
-                                style: TextStyle(
-                                  color: textColor,
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    Row(
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.home),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text('Lives in',
-                                style: TextStyle(color: textColor, fontSize: 18)),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Row(
-                          children: const [
-                            Text('AlHaram street',
-                                style: TextStyle(
-                                  color: textColor,
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    Row(
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.date_range),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text('Born',
-                                style: TextStyle(color: textColor, fontSize: 18)),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Row(
-                          children: const [
-                            Text('25-11-2022',
-                                style: TextStyle(
-                                  color: textColor,
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    Row(
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.add_location_alt_sharp),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text('From',
-                                style: TextStyle(color: textColor, fontSize: 18)),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Row(
-                          children: const [
-                            Text('Giza',
-                                style: TextStyle(
-                                  color: textColor,
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                  ],
-                ),
-
-
-                // buildPostWithIamge(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPost(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPostWithIamge(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPost(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPostWithIamge(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPost(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPostWithIamge(context),
-                // const SizedBox(
-                //   height: 5,
-                // ),
-                // buildPost(context),
-
-                // ConditionalBuilder(
-                //   condition: true,
-                //   builder: (BuildContext context) =>buildPost(),
-                //   fallback: (BuildContext context) =>CircularProgressIndicator(),
-                //
-                // ),
-              ],
+              ),
+              fallback:(context)=> Center(child: CircularProgressIndicator()),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
-
-// Container(
-// width: double.infinity,
-// height: 500.0,
-// color: Colors.grey[200],
-// child: Column(
-// children: [
-// Expanded(
-// flex: 1,
-// child: Column(
-// children: [
-// Container(
-// width: double.infinity,
-// height: 100.0,
-// color: Colors.amber,
-// child: Padding(
-// padding: const EdgeInsets.all(8.0),
-// child: Text(
-// 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elementum nulla, asdaswfwf a saw at ornare est. Pellentesque ac feugiat eros, non pulvinar lacus. In consequat turpis laoreet consequat consequat. Mauris vitae.',
-// maxLines: 4,
-// overflow: TextOverflow.ellipsis,
-// ),
-// ),
-// )
-// ],
-// ),
-// ),
-// Expanded(
-// flex: 2,
-// child: Row(
-// children: [Container(height: 50.0, color: Colors.orange)],
-// ),
-// ),
-// Expanded(
-// flex: 0,
-// child: Padding(
-// padding: const EdgeInsets.all(8.0),
-// child: Container(
-// height: 30.0,
-// child: Row(
-// crossAxisAlignment: CrossAxisAlignment.center,
-// children: [
-// Text('25-11-2023'),
-// Spacer(),
-// defaultButton(
-// background: defaultColor,
-// text: 'Send Message',
-// function: (){},
-// width: 160.0,
-// radius: 30.0,
-// height: 30.0,
-// ),
-// ],
-// ),
-// ),
-// )),
-// ],
-// ),
-// ),

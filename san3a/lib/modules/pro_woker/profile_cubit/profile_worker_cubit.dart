@@ -19,12 +19,12 @@ class ProfileWorkerCubit extends Cubit<ProfileWorkerState>{
 
   Future<void> getProfileIfnotExists() async {
     if(_profile == null){
-      return GetProfilePostsWorker(token: token??'');
+      return GetProfilePostsWorker();
     }
     return;
   }
 
-  void GetProfilePostsWorker({required String token}) {
+  void GetProfilePostsWorker() {
     emit(GetProfilePostWorkerLoadingState());
 
     DioHelper.getData(

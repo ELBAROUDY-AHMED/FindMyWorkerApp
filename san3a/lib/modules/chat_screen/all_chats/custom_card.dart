@@ -77,9 +77,12 @@ class CustomCard extends StatelessWidget {
                     children: [
                       Icon(Icons.done_all,color:  const Color(0xFF7E8181),),
                       SizedBox(width: 3,),
-                      Text(
-                        Cubit.chatModel!.data![index].latestMessage!.text!,
-                        style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 13)
+                      Expanded(
+                        child: Text(
+                          Cubit.chatModel!.data![index].latestMessage!.text!,
+                          style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
+                          maxLines: 1,
+                        ),
                       )
                     ],
                   ),

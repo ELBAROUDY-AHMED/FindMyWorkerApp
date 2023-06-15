@@ -5,8 +5,11 @@ import 'package:san3a/models/WorkerSendUserModel.dart';
 import 'package:san3a/models/profileModel.dart';
 import 'package:san3a/modules/Login_Screen/Cubit/cubit.dart';
 import 'package:san3a/modules/add_post_screen/add_post_screen.dart';
+import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
+import 'package:san3a/modules/chat_screen/individual_chat_screen/individual_chat_from_post.dart';
 import 'package:san3a/modules/pro_woker/profile_cubit/profile_worker_cubit.dart';
 import 'package:san3a/modules/pro_woker/profile_cubit/profile_worker_states.dart';
+import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_cubit.dart';
 import 'package:san3a/shared/component/component.dart';
 import 'package:san3a/shared/component/constant.dart';
 import 'package:san3a/shared/styles/colors.dart';
@@ -18,7 +21,7 @@ class ProWorker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) =>ProfileWorkerCubit()..GetProfilePostsWorker(token: token!),
+      create: (BuildContext context) =>ProfileWorkerCubit()..GetProfilePostsWorker(),
       child: BlocConsumer<ProfileWorkerCubit , ProfileWorkerState>(
         listener:(context , state){
 
@@ -137,7 +140,7 @@ class ProWorker extends StatelessWidget {
                               const SizedBox(
                                 height: 15.0,
                               ),
-                              if(Cubit.profile!.data.userData.role != 'customer')
+                              if(Cubit.profile!.data!.userData!.role != 'customer')
                                 Row(
                                   children: [
                                     Row(
@@ -190,7 +193,7 @@ class ProWorker extends StatelessWidget {
                               const SizedBox(
                                 height: 15.0,
                               ),
-                              if(Cubit.profile!.data.userData.role != 'customer')
+                              if(Cubit.profile!.data!.userData!.role != 'customer')
                                 Row(
                                   children: [
                                     Row(
@@ -214,7 +217,7 @@ class ProWorker extends StatelessWidget {
                                     )
                                   ],
                                 ),
-                              if(Cubit.profile!.data.userData.role != 'customer')
+                              if(Cubit.profile!.data!.userData!.role != 'customer')
                                 const SizedBox(
                                   height: 15.0,
                                 ),
@@ -254,9 +257,127 @@ class ProWorker extends StatelessWidget {
                     ListView.separated(
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context,index)=>ProfilePostWorkerItem(Cubit.profile!,context , index),
+                        itemBuilder: (context,index)=>InkWell(
+                          onTap: (){
+                            navigateTo(context, ProfilePostWorkerItem(Cubit.profile!,context , index));
+                          },
+                          child: Card(
+                            elevation: 10.0,
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.transparent,
+                                              radius:25,
+                                              backgroundImage: NetworkImage(
+                                                  TineLineCubit.get(context).getPost!.postData[index].userDataPost.photo),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(TineLineCubit.get(context).getPost!.postData[index].userDataPost.name),
+                                                Text(TineLineCubit.get(context).getPost!.postData[index].dateOfPost),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    Container(
+                                      alignment: Alignment.topRight,
+                                      child:  PopupMenuButton<String>(
+                                        itemBuilder: (BuildContext context) {
+                                          return [
+                                            PopupMenuItem<String>(
+                                              value: 'Edit',
+                                              child: Text('Edit'),
+                                            ),
+                                            PopupMenuItem<String>(
+                                              value: 'Delete',
+                                              child: Text('Delete'),
+                                            ),
+                                          ];
+                                        },
+                                        onSelected: (String value) {
+                                          switch (value) {
+                                            case 'Edit':
+                                            // Handle save action
+                                              print('Edit action');
+                                              break;
+                                            case 'Delete':
+                                            // Handle report action
+                                              print('Delete action');
+                                              break;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:3.0,
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10.0),
+                                      alignment: Alignment.bottomLeft,
+                                      child: Text(TineLineCubit.get(context).getPost!.postData[index].textPost!,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    TineLineCubit.get(context).getPost!.postData[index].image == null? SizedBox() : SizedBox(
+                                      child: Image(
+                                        image: NetworkImage(TineLineCubit.get(context).getPost!.postData[index].image!),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Divider(),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      defaultButtonWithIcon(
+                                        icon: Icons.send,
+                                        background: defaultColor,
+                                        text: 'Message',
+                                        function: () async {
+                                          await ChatCubit.get(context).GetChatsFromPost(
+                                              idUser: TineLineCubit.get(context).getPost!.postData[index].userDataPost.id);
+                                          navigateTo(context, IndividualChatFromPost(index, TineLineCubit.get(context).getPost!));
+                                        },
+                                        width: 120.0,
+                                        radius: 30.0,
+                                        height: 30.0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         separatorBuilder: (context,index)=>const SizedBox(height: 10,),
-                        itemCount: Cubit.profile!.data.posts!.length),
+                        itemCount: Cubit.profile!.data!.posts!.length),
                   ],
                 ),
               ),

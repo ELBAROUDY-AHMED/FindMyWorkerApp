@@ -3,11 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:san3a/layout/cubit/cubit_layout.dart';
 import 'package:san3a/layout/cubit/states_layout.dart';
 import 'package:san3a/layout/san3a_layout.dart';
+import 'package:san3a/modules/Admin/AdminScreen.dart';
+import 'package:san3a/modules/Admin/Cubit/AdminCubit.dart';
+import 'package:san3a/modules/Admin/Posts/Cubit/AdminPostCubit.dart';
 import 'package:san3a/modules/Login_Screen/Cubit/cubit.dart';
 import 'package:san3a/modules/Login_Screen/Login_Screen.dart';
 import 'package:san3a/modules/Onboarding_Screens/onbording.dart';
 import 'package:san3a/modules/Register_Screen/Cubit/cubit.dart';
+import 'package:san3a/modules/Splash_Screen/splash_screen.dart';
 import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
+import 'package:san3a/modules/pro_woker/profile_cubit/profile_worker_cubit.dart';
 import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_cubit.dart';
 import 'package:san3a/shared/component/constant.dart';
 import 'package:san3a/shared/cubit/bloc_observer.dart';
@@ -59,11 +64,17 @@ class MyApp extends StatelessWidget {
             create: (context) => San3aLayoutCubit()
               ..changeMode(fromShared: isDark, fromShared1: isOpen)),
         BlocProvider(create: (context) => LoginCubit()),
+        BlocProvider(create: (context) => AdminCubit()),
+        BlocProvider(create: (context) => San3aLayoutCubit()),
         BlocProvider(create: (context) => RegisterCubit()),
         BlocProvider(
             create: (context) => TineLineCubit()..GetPosts(token: token!)),
         BlocProvider(
-            create: (context) => ChatCubit()..GetAllChats(token: token!))
+            create: (context) => AdminPostCubit()..GetPostsForAdmin(token: token!)),
+        BlocProvider(
+            create: (context) => ChatCubit()..GetAllChats(token: token!)),
+        BlocProvider(
+            create: (context) => ProfileWorkerCubit()..GetProfilePostsWorker())
       ],
       child: BlocConsumer<San3aLayoutCubit, San3aLayoutStates>(
         listener: (context, state) {},
@@ -75,7 +86,7 @@ class MyApp extends StatelessWidget {
             theme: AppThemes.light,
             darkTheme: AppThemes.dark,
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
-            home: startWidget,
+            home: Login_Screen(),
           );
         },
       ),
