@@ -8,69 +8,89 @@ import 'package:san3a/models/message_socket_model.dart';
 import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
 import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_state.dart';
 import 'package:san3a/modules/chat_screen/camera%20page/camera_screen.dart';
-import 'package:san3a/modules/chat_screen/individual_chat_screen/maps/maps_screen.dart';
+//import 'package:san3a/modules/chat_screen/individual_chat_screen/maps/maps_screen.dart';
 import 'package:san3a/shared/component/component.dart';
 import 'package:san3a/shared/component/constant.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart';
 
 class IndividualChat extends StatefulWidget {
-  IndividualChat( this.index ,this.chatId,  {Key? key}) : super(key: key);
-   late int index;
-   late  String chatId;
+  IndividualChat( this.index ,this.userId,  {Key? key}) : super(key: key);
+  late int index;
+  late  String userId;
 
   @override
   State<IndividualChat> createState() =>
-      _IndividualChatState(this.chatId, this.index );
+      _IndividualChatState(this.userId, this.index );
 }
 
 class _IndividualChatState extends State<IndividualChat> {
-  _IndividualChatState(this.chatId, this.index);
+  _IndividualChatState(this.userId, this.index);
   bool sendButton = false;
   bool isSocket= false;
-  ScrollController scrollController = ScrollController();
+  ScrollController scrollController = new  ScrollController();
   ImagePicker _Picker = ImagePicker();
   XFile? file;
   int popTime = 0;
   MessageSocketModel? messageSocketModel;
-  late  String chatId;
+  late  String userId;
+
   late int index;
   int indexMessage= 0 ;
- TextEditingController messageController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
   IO.Socket? socket;
 
-late  List<MessageSocketModel> messages =[];
+  late  List<MessageSocketModel> messages =[];
 
   @override
   void initState() {
-    connect();
+    connectSocket();
+    print(isSocket);
+
     // TODO: implement initState
     super.initState();
   }
 
-  void connect(){
-    socket = IO.io("https://san3aapp.onrender.com");
-    socket!.on('user list update',(data){
-        print('connect');
+  void connectSocket(){
+    // Map<String , dynamic>options={'transports':['websocket'],'autoConnect': false} ;
+    // IO.Socket socket = IO.io("https://san3aapp.onrender.com" ,options);
+    //  socket.connect();
+
+    socket = IO.io('https://san3aapp.onrender.com',
+        OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .setExtraHeaders({'foo': 'bar'}) // optional
+            .build());
+    socket!.connect();
+
+    socket!.onConnect((_){
+      print('=================>connected with server');
+      socket!.emit("join" ,userId);
     } );
-    socket!.on('chat message',(data){
-      print(data);
+
+    socket!.on('res',(data){
+      print('================> data responed ${data}');
       setMessage("receiver",data["content"], data["time"]);
       scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     });
   }
 
-  void setMessage (String type , String message,String time ,){
-     messageSocketModel=MessageSocketModel(type: type , message:message, time: time);
+
+  void setMessage (String type , String message,String time ){
+    messageSocketModel=MessageSocketModel(type: type , message:message, time: time);
+    setState(() {
       setState(() {
         messages.add(messageSocketModel!);
+      });
     });
   }
 
   void sendMessage(String message ){
-    socket!.emit("chat message" , {"content":message,"chat":chatId , "time":DateTime.now().toString().substring(10 , 16)});
-    setMessage("sender",message ,DateTime.now().toString().substring(10 , 16));
-    print(message);
-    print(chatId);
+    print('emiiiiiiiiiitttttttttt=>>>>>>1');
+    socket!.emit("msg" , {"content":message,"chat":userId  , "time":DateTime.now().toString().substring(10 , 16)});
+    print('emiiiiiiiiiitttttttttt=>>>>>>2');
+    setMessage("sender",message, DateTime.now().toString().substring(10 , 16));
+
   }
   int i =0 ;
   @override
@@ -102,6 +122,7 @@ late  List<MessageSocketModel> messages =[];
             }
 
           }
+
         }
 
       },
@@ -123,7 +144,7 @@ late  List<MessageSocketModel> messages =[];
               leading: InkWell(
                 onTap: () {
                   isSocket = false;
-                  print('isSocket ============================================> ${isSocket}');
+                  // print('isSocket ============================================> ${isSocket}');
                   Cubit.GetAllChats(token: token!);
                   Navigator.pop(context);
                 },
@@ -216,38 +237,37 @@ late  List<MessageSocketModel> messages =[];
                         condition:state is MessageSuccessState,
                         builder: (context){
                           return ListView.builder(
-                            reverse: false,
+                            reverse: true,
                             controller: scrollController,
                             itemBuilder: (context, index) {
-
                               if (index == Cubit.messageModel!.data!.length) {
                                 return Container(
                                   height: 70,
                                 );
                               }
-                                if (messages[index].type=='sender') {
-                                  return OwnMessageSocketCard(index);
-                                  // if (Cubit.messageModel!.data![index].image != null) {
-                                  //
-                                  //   return OwnFileCard(Cubit.messageModel , index);
-                                  // }
-                                  // else {
-                                  //   return OwnMessageSocketCard( index);
-                                  // }
-                                }
-                                else if(messages[index].type=='receiver') {
-                                 return ReplyMessageSocketCard(index);
-                                  // if (Cubit.messageModel!.data![index].image != null) {
-                                  //   return ReplyFileCard(Cubit.messageModel,index);
-                                  // }
-                                  // else {
-                                  //   return ReplyMessageSocketCard(index);
-                                  // }
-                                }
+                              if (messages[index].type=='sender') {
+                                return OwnMessageSocketCard(index);
+                                // if (Cubit.messageModel!.data![index].image != null) {
+                                //
+                                //   return OwnFileCard(Cubit.messageModel , index);
+                                // }
+                                // else {
+                                //   return OwnMessageSocketCard( index);
+                                // }
+                              }
+                              else if(messages[index].type=='receiver') {
+                                return ReplyMessageSocketCard(index);
+                                // if (Cubit.messageModel!.data![index].image != null) {
+                                //   return ReplyFileCard(Cubit.messageModel,index);
+                                // }
+                                // else {
+                                //   return ReplyMessageSocketCard(index);
+                                // }
+                              }
 
 
                             },
-                            itemCount:  messages.length  ,
+                            itemCount:  messages.length   ,
                           );
                         },
                         fallback: (context )=>Center(child: CircularProgressIndicator())
@@ -345,11 +365,10 @@ late  List<MessageSocketModel> messages =[];
 
                                     Cubit.PostMessageChats(token: token!, index: index, content: messageController.text);
                                     sendMessage(messageController.text);
-
                                     messageController.clear();
+                                    isSocket = true ;
                                     setState(() {
-                                      messages.add(messageSocketModel!);
-                                      isSocket = true ;
+
                                       sendButton = false;
                                     });
                                   }
@@ -382,9 +401,9 @@ late  List<MessageSocketModel> messages =[];
                   onPressed: function,
                   icon: Icon(icon, size: 29, color: Colors.white))
 
-              // ,
+            // ,
 
-              ),
+          ),
           const SizedBox(
             height: 5,
           ),
@@ -422,8 +441,8 @@ late  List<MessageSocketModel> messages =[];
                     navigateTo(
                         context,
                         const CameraScreen(
-                            // onImageSend: onImageSend
-                            ));
+                          // onImageSend: onImageSend
+                        ));
                   }, Icons.camera_alt, Colors.pink, 'Camera'),
                   const SizedBox(
                     width: 40.0,
@@ -434,7 +453,7 @@ late  List<MessageSocketModel> messages =[];
                       popTime = 2;
                     });
                     XFile? file =
-                        await _Picker.pickImage(source: ImageSource.gallery);
+                    await _Picker.pickImage(source: ImageSource.gallery);
                     // navigateTo(context, CameraViewPage(path: file!.path,onImageSend: onImageSend,));
                   }, Icons.insert_photo, Colors.purple, 'Photo'),
                 ],
@@ -450,7 +469,7 @@ late  List<MessageSocketModel> messages =[];
                     width: 40.0,
                   ),
                   attach(() {
-                    navigateTo(context, MapsScreen());
+                   // navigateTo(context, MapsScreen());
                   }, Icons.location_pin, Colors.teal, 'Location'),
                 ],
               ),
@@ -486,7 +505,7 @@ late  List<MessageSocketModel> messages =[];
                   bottom: 4,
                   right: 10,
                   child: Row(children: [
-                    Text('${messages[index].time}',style: TextStyle(fontSize: 13,color: Colors.grey[600]),) ,
+                    Text('${messages[index].time}' ,style: TextStyle(fontSize: 13,color: Colors.grey[600]),) ,
                     SizedBox(width: 5,),
                     Icon(Icons.done_all,size: 20,),
                   ],),
@@ -499,7 +518,7 @@ late  List<MessageSocketModel> messages =[];
     );
   }
   Widget ReplyMessageSocketCard(index){
-  return   Align(
+    return   Align(
       alignment: Alignment.centerLeft,
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -513,8 +532,8 @@ late  List<MessageSocketModel> messages =[];
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 10,right: 60,top: 10,bottom: 20),
-                child:  Text('${messages[index].message}',style: TextStyle(fontSize: 16),) ) ,
+                  padding: const EdgeInsets.only(left: 10,right: 60,top: 10,bottom: 20),
+                  child:  Text('${messages[index].message}',style: TextStyle(fontSize: 16),) ) ,
 
               Positioned(
                 bottom: 4,
@@ -594,6 +613,6 @@ late  List<MessageSocketModel> messages =[];
   //         ),
   //       ),
   //     ),
-  //   );
-  // }
+  //);
+  //}
 }

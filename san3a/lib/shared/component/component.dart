@@ -103,7 +103,11 @@ Widget defaultButtonWithIcon(
               flex: 3,
               child: Text(
                 text,
-                style: const TextStyle(fontSize: 8, color: Colors.white),
+               // maxLines: 1,
+                style: const TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.white
+                ),
               ),
             ),
             Expanded(
@@ -833,8 +837,8 @@ Widget default_tTextFormField({
         // hintText: 'Email Adress',
         prefixIcon: Icon(prefix),
         labelText: labelText,
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(radius))),
+        // border: OutlineInputBorder(
+        //     borderRadius: BorderRadius.all(Radius.circular(radius))),
         suffixIcon: IconButton(onPressed: suffixPressed, icon: Icon(suffix)),
       ),
       onFieldSubmitted: onFieldSubmitted,

@@ -1,10 +1,13 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
+import 'package:san3a/modules/chat_screen/individual_chat_screen/individual_chat_from_post.dart';
 import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_cubit.dart';
 import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_states.dart';
 import 'package:san3a/modules/wroker_send_user/worker_send_user.dart';
 import 'package:san3a/shared/component/component.dart';
+import 'package:san3a/shared/styles/colors.dart';
 import 'package:san3a/shared/styles/icon_broken.dart';
 
 
@@ -100,13 +103,18 @@ class TimeLineForWorker extends StatelessWidget {
 
                                           Container(
                                             alignment: Alignment.topRight,
-                                            child: IconButton(
-                                                onPressed: (){},
-                                                icon: const Icon(
-                                                  Icons.more_vert_outlined,
-                                                  size: 18,
-                                                  color: Colors.blue,
-                                                ),
+                                            child: InkWell(
+                                              onTap: (){
+                                                
+                                              },
+                                              child: IconButton(
+                                                  onPressed: (){},
+                                                  icon: const Icon(
+                                                    Icons.more_vert_outlined,
+                                                    size: 18,
+                                                    color: Colors.blue,
+                                                  ),
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -114,6 +122,7 @@ class TimeLineForWorker extends StatelessWidget {
                                       SizedBox(
                                         height:3.0,
                                       ),
+                                      const Divider(),
                                       Column(
                                         children: [
                                           Container(
@@ -133,6 +142,28 @@ class TimeLineForWorker extends StatelessWidget {
                                             ),
                                           ),
                                         ],
+                                      ),
+                                      const Divider(),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                          defaultButtonWithIcon(
+                                          icon: Icons.send,
+                                          background: defaultColor,
+                                          text: 'Message',
+                                          function: () async {
+                                            await ChatCubit.get(context).GetChatsFromPost(
+                                                idUser: TineLineCubit.get(context).getPost!.postData[index].userDataPost.id);
+                                            navigateTo(context, IndividualChatFromPost(index, TineLineCubit.get(context).getPost!));
+                                          },
+                                          width: 120.0,
+                                          radius: 30.0,
+                                          height: 30.0,
+                                        ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
