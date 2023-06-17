@@ -6,13 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:san3a/header.dart';
 import 'package:san3a/layout/san3a_layout.dart';
-import 'package:san3a/modules/Admin/AdminScreen.dart';
+
 import 'package:san3a/modules/Login_Screen/Cubit/cubit.dart';
 import 'package:san3a/modules/Login_Screen/Cubit/states.dart';
 import 'package:san3a/modules/Register_Screen/SignUp_Screen1.dart';
 import 'package:san3a/modules/rereset/findaccount/FindAcount.dart';
-import 'package:san3a/modules/timeline/timeline_user/timeline_user.dart';
-import 'package:san3a/modules/timeline/timeline_worker/timeline_worker.dart';
 import 'package:san3a/shared/component/component.dart';
 import 'package:san3a/shared/component/constant.dart';
 
@@ -43,13 +41,7 @@ class Login_Screen extends StatelessWidget {
               value: state.loginModel!.token,
             ).then((value) {
               token = state.loginModel!.token!;
-              if(LoginCubit.get(context).loginModel!.data!.role == "admin"){
-                navigateAndFinish(context, AdminScreen());
-              }else if(LoginCubit.get(context).loginModel!.data!.role == "worker"){
-                navigateAndFinish(context, San3aLayout());
-              }else{
-                navigateAndFinish(context, San3aLayout());
-              }
+              navigateAndFinish(context, San3aLayout());
               showToast(
                   text: state.loginModel!.message, state: ToastState.SUCCESS);
             });

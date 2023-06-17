@@ -103,11 +103,7 @@ Widget defaultButtonWithIcon(
               flex: 3,
               child: Text(
                 text,
-               // maxLines: 1,
-                style: const TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.white
-                ),
+                style: const TextStyle(fontSize: 8, color: Colors.white),
               ),
             ),
             Expanded(
@@ -180,37 +176,15 @@ Widget PostItem(PostModel model, context, index) => SafeArea(
               children: [
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: (){
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.arrow_back),
-                      iconSize: 30.0,
-                    ),
-                   SizedBox(width: 10.0,),
-                    Text(
-                      model.postData[index].userDataPost.name,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ],
-                ),
-                const Divider(
-                  thickness: 3.0,
-                ),
-                Row(
-                  children: [
                     InkWell(
                       onTap: () {
                         TineLineCubit.get(context).goToProfilePerson(index);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 25,
-                          backgroundImage: NetworkImage(
-                              model.postData[index].userDataPost.photo),
-                        ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: 25,
+                        backgroundImage: NetworkImage(
+                            model.postData[index].userDataPost.photo),
                       ),
                     ),
                     const SizedBox(
@@ -237,52 +211,33 @@ Widget PostItem(PostModel model, context, index) => SafeArea(
                               ],
                             ),
                           ),
-                          Text(
-                            model.postData[index].dateOfPost,
-                            style: Theme.of(context).textTheme.caption,
+                          Row(
+                            children: [
+                              Text(
+                                model.postData[index].dateOfPost,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                model.postData[index].job,
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ],
                           ),
-                          const SizedBox(
-                            width: 3,
-                          ),
-                          // Text(
-                          //   model.postData[index].job,
-                          //   style: Theme.of(context).textTheme.caption,
-                          // ),
                         ],
                       ),
                     ),
                     const SizedBox(
                       width: 15,
                     ),
-                    Container(
-                      alignment: Alignment.topRight,
-                      child:  PopupMenuButton<String>(
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItem<String>(
-                              value: 'Save',
-                              child: Text('Saved'),
-                            ),
-                            PopupMenuItem<String>(
-                              value: 'Report',
-                              child: Text('Report'),
-                            ),
-                          ];
-                        },
-                        onSelected: (String value) {
-                          switch (value) {
-                            case 'Saved':
-                            // Handle save action
-                              print('Save action');
-                              break;
-                            case 'Report':
-                            // Handle report action
-                              print('Report action');
-                              break;
-                          }
-                        },
-                      ),
-                    ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          IconBroken.More_Square,
+                          size: 18,
+                        )),
                   ],
                 ),
                 const SizedBox(
@@ -290,7 +245,7 @@ Widget PostItem(PostModel model, context, index) => SafeArea(
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                 // child: myDividor2(),
+                  child: myDividor2(),
                 ),
                 const SizedBox(
                   height: 10,
@@ -305,10 +260,9 @@ Widget PostItem(PostModel model, context, index) => SafeArea(
                         .copyWith(fontSize: 14),
                   ),
                 ),
-                const Divider(),
                 if (model.postData[index].image != null)
                   Padding(
-                    padding: const EdgeInsetsDirectional.all(8.0),
+                    padding: const EdgeInsetsDirectional.only(top: 15.0),
                     child: Container(
                         height: 200.0,
                         width: double.infinity,
@@ -319,39 +273,42 @@ Widget PostItem(PostModel model, context, index) => SafeArea(
                                 image: NetworkImage(
                                     model.postData[index].image!)))),
                   ),
-                const Divider(),
+                const SizedBox(
+                  height: 10,
+                ),
                 if (model.postData[index].image != null)
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                   // child: myDividor2(),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: myDividor2(),
                   ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    BlocConsumer<ChatCubit, ChatState>(
-                      listener: (context, state) {},
-                      builder: (context, state) {
-                        return defaultButtonWithIcon(
-                          icon: Icons.send,
-                          background: defaultColor,
-                          text: 'Message',
-                          function: () async {
-                            await ChatCubit.get(context).GetChatsFromPost(
-                                idUser:
-                                    model.postData[index].userDataPost.id);
-                            navigateTo(context,
-                                IndividualChatFromPost(index, model));
-                          },
-                          width: 120.0,
-                          radius: 40.0,
-                          height: 40.0,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const Divider(
-                  thickness: 3.0,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      BlocConsumer<ChatCubit, ChatState>(
+                        listener: (context, state) {},
+                        builder: (context, state) {
+                          return defaultButtonWithIcon(
+                            icon: Icons.send,
+                            background: defaultColor,
+                            text: 'Send Message',
+                            function: () async {
+                              await ChatCubit.get(context).GetChatsFromPost(
+                                  idUser:
+                                      model.postData[index].userDataPost.id);
+
+                              navigateTo(context,
+                                  IndividualChatFromPost(index, model));
+                            },
+                            width: 120.0,
+                            radius: 30.0,
+                            height: 30.0,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -379,7 +336,7 @@ Widget ProfilePostWorkerItem(ProfileModel model, context, index) => SizedBox(
                     CircleAvatar(
                       radius: 25,
                       backgroundImage:
-                          NetworkImage(model.data!.posts![index].user!.photo!),
+                          NetworkImage(model.data.posts![index].user!.photo!),
                     ),
                     const SizedBox(
                       width: 15,
@@ -391,7 +348,7 @@ Widget ProfilePostWorkerItem(ProfileModel model, context, index) => SizedBox(
                           Row(
                             children: [
                               Text(
-                                model.data!.posts![index].user!.name!,
+                                model.data.posts![index].user!.name!,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
@@ -405,14 +362,14 @@ Widget ProfilePostWorkerItem(ProfileModel model, context, index) => SizedBox(
                           Row(
                             children: [
                               Text(
-                                model.data!.posts![index].date!,
+                                model.data.posts![index].date!,
                                 style: Theme.of(context).textTheme.caption,
                               ),
                               const SizedBox(
                                 width: 3,
                               ),
                               Text(
-                                model.data!.posts![index].job!,
+                                model.data.posts![index].job!,
                                 style: Theme.of(context).textTheme.caption,
                               ),
                             ],
@@ -445,7 +402,7 @@ Widget ProfilePostWorkerItem(ProfileModel model, context, index) => SizedBox(
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 8.0),
                 child: Text(
-                  model.data!.posts![index].description!,
+                  model.data.posts![index].description!,
                   style: Theme.of(context)
                       .textTheme
                       .caption!
@@ -876,8 +833,8 @@ Widget default_tTextFormField({
         // hintText: 'Email Adress',
         prefixIcon: Icon(prefix),
         labelText: labelText,
-        // border: OutlineInputBorder(
-        //     borderRadius: BorderRadius.all(Radius.circular(radius))),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(radius))),
         suffixIcon: IconButton(onPressed: suffixPressed, icon: Icon(suffix)),
       ),
       onFieldSubmitted: onFieldSubmitted,

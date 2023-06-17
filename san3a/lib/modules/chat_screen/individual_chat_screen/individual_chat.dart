@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,122 +8,102 @@ import 'package:san3a/models/message_socket_model.dart';
 import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
 import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_state.dart';
 import 'package:san3a/modules/chat_screen/camera%20page/camera_screen.dart';
+import 'package:san3a/modules/chat_screen/individual_chat_screen/maps/maps_screen.dart';
 import 'package:san3a/shared/component/component.dart';
 import 'package:san3a/shared/component/constant.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:socket_io_client/socket_io_client.dart';
 
 class IndividualChat extends StatefulWidget {
-  IndividualChat(this.index, this.chatId, {Key? key}) : super(key: key);
-  late int index;
-  late String chatId;
+  IndividualChat( this.index ,this.chatId,  {Key? key}) : super(key: key);
+   late int index;
+   late  String chatId;
 
   @override
   State<IndividualChat> createState() =>
-      _IndividualChatState(this.chatId, this.index);
+      _IndividualChatState(this.chatId, this.index );
 }
 
 class _IndividualChatState extends State<IndividualChat> {
   _IndividualChatState(this.chatId, this.index);
   bool sendButton = false;
-  bool isSocket = false;
-  ScrollController scrollController = new ScrollController();
+  bool isSocket= false;
+  ScrollController scrollController = ScrollController();
   ImagePicker _Picker = ImagePicker();
   XFile? file;
   int popTime = 0;
   MessageSocketModel? messageSocketModel;
-  late String chatId;
-
+  late  String chatId;
   late int index;
-  int indexMessage = 0;
-  TextEditingController messageController = TextEditingController();
+  int indexMessage= 0 ;
+ TextEditingController messageController = TextEditingController();
   IO.Socket? socket;
 
-  late List<MessageSocketModel> messages = [];
+late  List<MessageSocketModel> messages =[];
 
   @override
   void initState() {
-    connectSocket();
-    print(isSocket);
-
+    connect();
     // TODO: implement initState
     super.initState();
   }
 
-  void connectSocket() {
-    socket = IO.io(
-        'https://san3aapp.onrender.com',
-        OptionBuilder().setTransports(['websocket']) // for Flutter or Dart VM
-            .setExtraHeaders({'foo': 'bar'}) // optional
-            .build());
-    socket!.connect();
-
-    socket!.onConnect((_) {
-      print('=================>connected with server');
-      socket!.emit("join", chatId);
-    });
-
-    socket!.on('res', (data) {
-      print('================> data responed ${data}');
-      setMessage("receiver", data["content"], data["time"]);
-      scrollController.animateTo(scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+  void connect(){
+    socket = IO.io("https://san3aapp.onrender.com");
+    socket!.on('user list update',(data){
+        print('connect');
+    } );
+    socket!.on('chat message',(data){
+      print(data);
+      setMessage("receiver",data["content"], data["time"]);
+      scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     });
   }
 
-  void setMessage(String type, String message, String time) {
-    messageSocketModel =
-        MessageSocketModel(type: type, message: message, time: time);
-    setState(() {
-      messages.add(messageSocketModel!);
-      print("Hello ${messages.length}");
+  void setMessage (String type , String message,String time ,){
+     messageSocketModel=MessageSocketModel(type: type , message:message, time: time);
+      setState(() {
+        messages.add(messageSocketModel!);
     });
   }
 
-  void sendMessage(String message) {
-    print('emiiiiiiiiiitttttttttt=>>>>>>1');
-    socket!.emit("msg", {
-      "content": message,
-      "chat": chatId,
-      "time": DateTime.now().toString().substring(10, 16)
-    });
-    print('emiiiiiiiiiitttttttttt=>>>>>>2');
-    setMessage("sender", message, DateTime.now().toString().substring(10, 16));
-    print("==================> sender ${i}");
+  void sendMessage(String message ){
+    socket!.emit("chat message" , {"content":message,"chat":chatId , "time":DateTime.now().toString().substring(10 , 16)});
+    setMessage("sender",message ,DateTime.now().toString().substring(10 , 16));
+    print(message);
+    print(chatId);
   }
-
-  int i = 0;
+  int i =0 ;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChatCubit, ChatState>(
       listener: (context, state) {
-        if (state is MessageSuccessState) {
-          for (i = 0; i < state.messageModel!.data!.length; i++) {
-            if (state.messageModel!.data![i].sender ==
-                ChatCubit.get(context).chatModel!.loginId) {
+        if(state is MessageSuccessState){
+          for( i = 0 ; i<state.messageModel!.data!.length;i++) {
+            if (state.messageModel!.data![i].sender == ChatCubit.get(context).chatModel!.loginId) {
               messageSocketModel = MessageSocketModel(
                   type: 'sender',
                   message: state.messageModel!.data![i].text!,
                   time: state.messageModel!.data![i].time!);
 
               messages.add(messageSocketModel!);
-              print(
-                  '================> type ${messages[i].type} ///================> message ${messages[i].message} //=====> ${i}');
+              print('================> type ${messages[i].type} ///================> message ${messages[i].message} //=====> ${i}');
               print("==================> sender ${i}");
-            } else {
+            }
+            else {
               messageSocketModel = MessageSocketModel(
                   type: 'receiver',
                   message: state.messageModel!.data![i].text!,
                   time: state.messageModel!.data![i].time!);
 
               messages.add(messageSocketModel!);
-              print(
-                  '================> type ${messages[i].type} ///================> message ${messages[i].message} //=====> ${i}');
               print("==================> receiver ${i}");
+
+
             }
+
           }
-          print("==================> ${i}");
         }
+
       },
       builder: (context, state) {
         var Cubit = ChatCubit.get(context);
@@ -130,8 +111,7 @@ class _IndividualChatState extends State<IndividualChat> {
           onWillPop: () async {
             Cubit.GetAllChats(token: token!);
             isSocket = false;
-            print(
-                'isSocket ============================================> ${isSocket}');
+            print('isSocket ============================================> ${isSocket}');
             return true;
           },
           child: Scaffold(
@@ -143,7 +123,7 @@ class _IndividualChatState extends State<IndividualChat> {
               leading: InkWell(
                 onTap: () {
                   isSocket = false;
-                  // print('isSocket ============================================> ${isSocket}');
+                  print('isSocket ============================================> ${isSocket}');
                   Cubit.GetAllChats(token: token!);
                   Navigator.pop(context);
                 },
@@ -161,19 +141,17 @@ class _IndividualChatState extends State<IndividualChat> {
                     const SizedBox(
                       width: 5,
                     ),
-                    if (Cubit.chatModel!.data![index].to!.id ==
-                        Cubit.chatModel!.loginId)
+                    if(Cubit.chatModel!.data![index].to!.id ==  Cubit.chatModel!.loginId)
                       CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage(
-                            '${Cubit.chatModel!.data![index].from!.photo}'),
+                        backgroundImage:
+                        NetworkImage('${Cubit.chatModel!.data![index].from!.photo}'),
                       ),
-                    if (Cubit.chatModel!.data![index].to!.id !=
-                        Cubit.chatModel!.loginId)
+                    if(Cubit.chatModel!.data![index].to!.id !=  Cubit.chatModel!.loginId)
                       CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage(
-                            '${Cubit.chatModel!.data![index].to!.photo}'),
+                        backgroundImage:
+                        NetworkImage('${Cubit.chatModel!.data![index].to!.photo}'),
                       )
                   ],
                 ),
@@ -182,8 +160,7 @@ class _IndividualChatState extends State<IndividualChat> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (Cubit.chatModel!.data![index].to!.id ==
-                      Cubit.chatModel!.loginId)
+                  if(Cubit.chatModel!.data![index].to!.id ==  Cubit.chatModel!.loginId)
                     Text(
                       '${Cubit.chatModel!.data![index].from!.name}',
                       style: const TextStyle(
@@ -191,8 +168,7 @@ class _IndividualChatState extends State<IndividualChat> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
-                  if (Cubit.chatModel!.data![index].to!.id !=
-                      Cubit.chatModel!.loginId)
+                  if(Cubit.chatModel!.data![index].to!.id !=  Cubit.chatModel!.loginId)
                     Text(
                       '${Cubit.chatModel!.data![index].to!.name}',
                       style: const TextStyle(
@@ -237,35 +213,45 @@ class _IndividualChatState extends State<IndividualChat> {
                 children: [
                   Expanded(
                     child: ConditionalBuilder(
-                        condition: state is MessageSuccessState,
-                        builder: (context) {
+                        condition:state is MessageSuccessState,
+                        builder: (context){
                           return ListView.builder(
+                            reverse: false,
                             controller: scrollController,
                             itemBuilder: (context, index) {
-                              if (messages[index].type == 'sender') {
-                                return OwnMessageSocketCard(index);
-                                // if (Cubit.messageModel!.data![index].image != null) {
-                                //
-                                //   return OwnFileCard(Cubit.messageModel , index);
-                                // }
-                                // else {
-                                //   return OwnMessageSocketCard( index);
-                                // }
-                              } else if (messages[index].type == 'receiver') {
-                                return ReplyMessageSocketCard(index);
-                                // if (Cubit.messageModel!.data![index].image != null) {
-                                //   return ReplyFileCard(Cubit.messageModel,index);
-                                // }
-                                // else {
-                                //   return ReplyMessageSocketCard(index);
-                                // }
+
+                              if (index == Cubit.messageModel!.data!.length) {
+                                return Container(
+                                  height: 70,
+                                );
                               }
+                                if (messages[index].type=='sender') {
+                                  return OwnMessageSocketCard(index);
+                                  // if (Cubit.messageModel!.data![index].image != null) {
+                                  //
+                                  //   return OwnFileCard(Cubit.messageModel , index);
+                                  // }
+                                  // else {
+                                  //   return OwnMessageSocketCard( index);
+                                  // }
+                                }
+                                else if(messages[index].type=='receiver') {
+                                 return ReplyMessageSocketCard(index);
+                                  // if (Cubit.messageModel!.data![index].image != null) {
+                                  //   return ReplyFileCard(Cubit.messageModel,index);
+                                  // }
+                                  // else {
+                                  //   return ReplyMessageSocketCard(index);
+                                  // }
+                                }
+
+
                             },
-                            itemCount: messages.length,
+                            itemCount:  messages.length  ,
                           );
                         },
-                        fallback: (context) =>
-                            Center(child: CircularProgressIndicator())),
+                        fallback: (context )=>Center(child: CircularProgressIndicator())
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -312,13 +298,12 @@ class _IndividualChatState extends State<IndividualChat> {
                                               onPressed: () {
                                                 showModalBottomSheet(
                                                     backgroundColor:
-                                                        Colors.transparent,
+                                                    Colors.transparent,
                                                     context: context,
                                                     builder: (builder) =>
                                                         bottomSheet());
                                               },
-                                              icon:
-                                                  const Icon(Icons.attach_file),
+                                              icon: const Icon(Icons.attach_file),
                                             ),
                                           ),
                                           SizedBox(
@@ -331,18 +316,17 @@ class _IndividualChatState extends State<IndividualChat> {
                                                 navigateTo(
                                                     context,
                                                     const CameraScreen(
-                                                        // onImageSend: onImageSend
-                                                        ));
+                                                      // onImageSend: onImageSend
+                                                    ));
                                               },
-                                              icon:
-                                                  const Icon(Icons.camera_alt),
+                                              icon: const Icon(Icons.camera_alt),
                                             ),
                                           ),
                                         ],
                                       ),
                                       contentPadding:
-                                          const EdgeInsetsDirectional.only(
-                                              start: 20, end: 20)),
+                                      const EdgeInsetsDirectional.only(
+                                          start: 20, end: 20)),
                                 )),
                           ),
                           Padding(
@@ -354,20 +338,18 @@ class _IndividualChatState extends State<IndividualChat> {
                                 onPressed: () {
                                   if (sendButton) {
                                     scrollController.animateTo(
-                                        scrollController
-                                            .position.maxScrollExtent,
+                                        scrollController.position.maxScrollExtent,
                                         duration:
-                                            const Duration(milliseconds: 300),
+                                        const Duration(milliseconds: 300),
                                         curve: Curves.easeOut);
 
-                                    Cubit.PostMessageChats(
-                                        token: token!,
-                                        index: index,
-                                        content: messageController.text);
+                                    Cubit.PostMessageChats(token: token!, index: index, content: messageController.text);
                                     sendMessage(messageController.text);
+
                                     messageController.clear();
-                                    isSocket = true;
                                     setState(() {
+                                      messages.add(messageSocketModel!);
+                                      isSocket = true ;
                                       sendButton = false;
                                     });
                                   }
@@ -468,7 +450,7 @@ class _IndividualChatState extends State<IndividualChat> {
                     width: 40.0,
                   ),
                   attach(() {
-                    // navigateTo(context, MapsScreen());
+                    navigateTo(context, MapsScreen());
                   }, Icons.location_pin, Colors.teal, 'Location'),
                 ],
               ),
@@ -479,49 +461,35 @@ class _IndividualChatState extends State<IndividualChat> {
     );
   }
 
-  Widget OwnMessageSocketCard(index) {
+  Widget OwnMessageSocketCard(index){
     return Align(
       alignment: Alignment.centerRight,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minWidth: MediaQuery.of(context).size.width - 225,
-          maxWidth: MediaQuery.of(context).size.width - 45,
+          minWidth: MediaQuery.of(context).size.width-225,
+          maxWidth: MediaQuery.of(context).size.width-45,
         ),
         child: Container(
           child: Card(
             elevation: 1,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             color: Color(0xffdcf8c6),
-            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            margin: EdgeInsets.symmetric(horizontal: 15 ,vertical: 5),
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 60, top: 10, bottom: 20),
-                  child: Text(
-                    '${messages[index].message}',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  padding: const EdgeInsets.only(left: 10,right: 60,top: 10,bottom: 20),
+
+                  child: Text('${messages[index].message}',style: TextStyle(fontSize: 16),) ,
                 ),
                 Positioned(
                   bottom: 4,
                   right: 10,
-                  child: Row(
-                    children: [
-                      Text(
-                        '${messages[index].time}',
-                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.done_all,
-                        size: 20,
-                      ),
-                    ],
-                  ),
+                  child: Row(children: [
+                    Text('${messages[index].time}',style: TextStyle(fontSize: 13,color: Colors.grey[600]),) ,
+                    SizedBox(width: 5,),
+                    Icon(Icons.done_all,size: 20,),
+                  ],),
                 )
               ],
             ),
@@ -530,35 +498,29 @@ class _IndividualChatState extends State<IndividualChat> {
       ),
     );
   }
-
-  Widget ReplyMessageSocketCard(index) {
-    return Align(
+  Widget ReplyMessageSocketCard(index){
+  return   Align(
       alignment: Alignment.centerLeft,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width - 45,
+          maxWidth: MediaQuery.of(context).size.width-45,
         ),
         child: Card(
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           color: Color(0xffE9EBECFF),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          margin: EdgeInsets.symmetric(horizontal: 15 ,vertical: 5),
           child: Stack(
             children: [
               Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 60, top: 10, bottom: 20),
-                  child: Text(
-                    '${messages[index].message}',
-                    style: TextStyle(fontSize: 16),
-                  )),
+                padding: const EdgeInsets.only(left: 10,right: 60,top: 10,bottom: 20),
+                child:  Text('${messages[index].message}',style: TextStyle(fontSize: 16),) ) ,
+
               Positioned(
                 bottom: 4,
                 right: 10,
-                child: Text(
-                  '${messages[index].time}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                ),
+                child: Text('${messages[index].time}',style: TextStyle(fontSize: 13,color: Colors.grey[600]),),
+
               )
             ],
           ),
@@ -632,6 +594,6 @@ class _IndividualChatState extends State<IndividualChat> {
   //         ),
   //       ),
   //     ),
-  //);
-  //}
+  //   );
+  // }
 }

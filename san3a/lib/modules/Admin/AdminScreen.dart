@@ -5,10 +5,13 @@ import 'package:san3a/animation.dart';
 import 'package:san3a/header.dart';
 import 'package:san3a/modules/Admin/Cubit/AdminCubit.dart';
 import 'package:san3a/modules/Admin/Cubit/AdminStates.dart';
+<<<<<<< HEAD
 import 'package:san3a/modules/Admin/Payment/PaymentScreen.dart';
 import 'package:san3a/modules/Admin/Posts/PostsScreen.dart';
 import 'package:san3a/modules/Admin/Report/ReportScreen.dart';
 import 'package:san3a/modules/Admin/Users/UsersScreen.dart';
+=======
+>>>>>>> origin/main
 import 'package:san3a/modules/Login_Screen/Login_Screen.dart';
 import 'package:san3a/shared/component/component.dart';
 import 'package:san3a/shared/styles/icon_broken.dart';
@@ -79,14 +82,22 @@ class AdminScreen extends StatelessWidget {
                   InkWell(
                     hoverColor: const Color(0xff4377ec),
                     onTap: (){
+<<<<<<< HEAD
                       navigateTo(context, PaymentScreen());
+=======
+
+>>>>>>> origin/main
                     },
                     child: ListTile(
                      // tileColor: Colors.greenAccent,
                       leading: Icon(Icons.payment,
                         color: Colors.green,
                       ),
+<<<<<<< HEAD
                       title: Text("All Payment Done",
+=======
+                      title: Text("All Payment",
+>>>>>>> origin/main
                         style: TextStyle(
                           fontFamily: 'mulish',
                           fontWeight: FontWeight.bold,
@@ -101,14 +112,22 @@ class AdminScreen extends StatelessWidget {
                   InkWell(
                     hoverColor: const Color(0xff4377ec),
                     onTap: (){
+<<<<<<< HEAD
                       navigateTo(context, PostsScreen());
+=======
+
+>>>>>>> origin/main
                     },
                     child: ListTile(
                       //tileColor: Colors.indigo,
                       leading: Icon(Icons.post_add,
                         color: Colors.deepPurple,
                       ),
+<<<<<<< HEAD
                       title: Text("All Report Posts",
+=======
+                      title: Text("Posts",
+>>>>>>> origin/main
                         style: TextStyle(
                           fontFamily: 'mulish',
                           fontWeight: FontWeight.bold,
@@ -123,7 +142,11 @@ class AdminScreen extends StatelessWidget {
                   InkWell(
                     hoverColor: const Color(0xff4377ec),
                     onTap: (){
+<<<<<<< HEAD
                       navigateTo(context, UsersScreen());
+=======
+
+>>>>>>> origin/main
                     },
                     child: ListTile(
                      // tileColor: Colors.limeAccent,
@@ -145,14 +168,22 @@ class AdminScreen extends StatelessWidget {
                   InkWell(
                     hoverColor: const Color(0xff4377ec),
                     onTap: (){
+<<<<<<< HEAD
                       navigateTo(context, ComplaintsScreen());
+=======
+
+>>>>>>> origin/main
                     },
                     child: ListTile(
                       //tileColor: Colors.limeAccent,
                       leading: Icon(Icons.warning_amber,
                       color: Colors.red,
                       ),
+<<<<<<< HEAD
                       title: Text("Complaints",
+=======
+                      title: Text("All Report",
+>>>>>>> origin/main
                         style: TextStyle(
                           fontFamily: 'mulish',
                           fontWeight: FontWeight.bold,

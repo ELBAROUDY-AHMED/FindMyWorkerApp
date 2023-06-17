@@ -1,13 +1,10 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:san3a/modules/chat_screen/all_chats/cubit_chat/chat_cubit.dart';
-import 'package:san3a/modules/chat_screen/individual_chat_screen/individual_chat_from_post.dart';
 import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_cubit.dart';
 import 'package:san3a/modules/timeline/timeline_worker/timeline_cubit/timeLine_states.dart';
 import 'package:san3a/modules/wroker_send_user/worker_send_user.dart';
 import 'package:san3a/shared/component/component.dart';
-import 'package:san3a/shared/styles/colors.dart';
 import 'package:san3a/shared/styles/icon_broken.dart';
 
 
@@ -19,6 +16,7 @@ class TimeLineForWorker extends StatelessWidget {
     return BlocConsumer<TineLineCubit, TimeLineState>(
       listener: (context, state) {
         if (state is GoToProfilePersonSuccessState) {
+
           navigateTo(context, const ProUser());
         }
       },
@@ -102,39 +100,13 @@ class TimeLineForWorker extends StatelessWidget {
 
                                           Container(
                                             alignment: Alignment.topRight,
-                                            child:  PopupMenuButton<String>(
-                                              itemBuilder: (BuildContext context) {
-                                                return [
-                                                  PopupMenuItem<String>(
-                                                    value: 'Save',
-                                                    child: Text('Saved'),
-                                                  ),
-                                                  // PopupMenuItem<String>(
-                                                  //   value: 'Delete',
-                                                  //   child: Text('Delete'),
-                                                  // ),
-                                                  PopupMenuItem<String>(
-                                                    value: 'Report',
-                                                    child: Text('Report'),
-                                                  ),
-                                                ];
-                                              },
-                                              onSelected: (String value) {
-                                                switch (value) {
-                                                  case 'Saved':
-                                                  // Handle save action
-                                                    print('Save action');
-                                                    break;
-                                                  // case 'Delete':
-                                                  // // Handle delete action
-                                                  //   print('Delete action');
-                                                  //   break;
-                                                  case 'Report':
-                                                  // Handle report action
-                                                    print('Report action');
-                                                    break;
-                                                }
-                                              },
+                                            child: IconButton(
+                                                onPressed: (){},
+                                                icon: const Icon(
+                                                  Icons.more_vert_outlined,
+                                                  size: 18,
+                                                  color: Colors.blue,
+                                                ),
                                             ),
                                           ),
                                         ],
@@ -155,7 +127,6 @@ class TimeLineForWorker extends StatelessWidget {
                                             ),
                                             ),
                                           ),
-                                          const Divider(),
                                           TineLineCubit.get(context).getPost!.postData[index].image == null? SizedBox() : SizedBox(
                                             child: Image(
                                               image: NetworkImage(TineLineCubit.get(context).getPost!.postData[index].image!),
@@ -163,35 +134,12 @@ class TimeLineForWorker extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      const Divider(),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                          defaultButtonWithIcon(
-                                          icon: Icons.send,
-                                          background: defaultColor,
-                                          text: 'Message',
-                                          function: () async {
-                                            await ChatCubit.get(context).GetChatsFromPost(
-                                                idUser: TineLineCubit.get(context).getPost!.postData[index].userDataPost.id);
-                                            navigateTo(context, IndividualChatFromPost(index, TineLineCubit.get(context).getPost!));
-                                          },
-                                          width: 120.0,
-                                          radius: 40.0,
-                                          height: 40.0,
-                                        ),
-                                          ],
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ),
                               ),
                               separatorBuilder: (context,index)=>const SizedBox(height: 10,),
-                              itemCount: Cubit.getPost!.postData.length,
-                          ),
+                              itemCount: Cubit.getPost!.postData.length),
                           const SizedBox(height: 10,),
                         ],
                       ),
